@@ -89,6 +89,7 @@ int main()
 	);
 
 	//Gemini helped here to resize the console
+	// --------------------------------------------
 	COORD coordBufSize = { (SHORT)nScreenWidth, (SHORT)nScreenHeight };
 
 	SMALL_RECT rectWindow =
