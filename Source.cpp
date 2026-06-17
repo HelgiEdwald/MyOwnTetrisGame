@@ -5,7 +5,7 @@ using namespace std;
 wstring tetromino[7];
 
 int nFieldWidth = 12;
-int nFieldHeight = 18;	
+int nFieldHeight = 18;
 
 unsigned char* pField = nullptr;
 
@@ -66,19 +66,36 @@ int main()
 	//Create play field buffer
 	pField = new unsigned char[nFieldHeight * nFieldWidth];
 
-	for (int x = 0; x < nFieldWidth; x++) // Board Boundary
+	// Board Boundary
+	for (int x = 0; x < nFieldWidth; x++)
+	{
 		for (int y = 0; y < nFieldHeight; y++)
-			pField[y * nFieldWidth + x] = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1) ? 9 : 0;
+		{
+			bool bBoundary = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1); 
+			pField[y * nFieldWidth + x] = bBoundary ? 9 : 0;
+		}
+	}
 
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
 	for (int i = 0; i < nScreenWidth * nScreenHeight; i++) screen[i] = L' ';
 
-	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	HANDLE hConsole = CreateConsoleScreenBuffer
+	(
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		NULL,
+		CONSOLE_TEXTMODE_BUFFER,
+		NULL
+	);
 
 	//Gemini helped here to resize the console
-	// --- ADD THIS BLOCK TO RESIZE THE CONSOLE ---
 	COORD coordBufSize = { (SHORT)nScreenWidth, (SHORT)nScreenHeight };
-	SMALL_RECT rectWindow = { 0, 0, (SHORT)(nScreenWidth - 1), (SHORT)(nScreenHeight - 1) };
+
+	SMALL_RECT rectWindow =
+	{
+		0, 0, (SHORT)(nScreenWidth - 1),
+		(SHORT)(nScreenHeight - 1)
+	};
 
 	// 1. Temporarily shrink the window to 1x1 to prevent sizing conflicts
 	SMALL_RECT minWindow = { 0, 0, 0, 0 };
@@ -99,17 +116,27 @@ int main()
 
 	while (!bGameOver)
 	{
+
 		// Draw Field
 		for (int x = 0; x < nFieldWidth; x++)
+		{
 			for (int y = 0; y < nFieldHeight; y++)
-				screen[(y + 2) * nScreenWidth + (x + 2)] = L" ABCDEFG=#"[pField[y * nFieldWidth + x]];
-
+			{
+				screen[(y + 2) * nScreenWidth + (x + 2)] =
+					L" ABCDEFG=#"[pField[y * nFieldWidth + x]];
+			}
+		}
 
 		//Display Frame
-		WriteConsoleOutputCharacter(hConsole, screen, nScreenWidth * nScreenHeight, { 0,0 },&dwBytesWritten);
+		WriteConsoleOutputCharacter
+		(
+			hConsole, 
+			screen, 
+			nScreenWidth * nScreenHeight, 
+			{ 0,0 }, 
+			&dwBytesWritten
+		);
 	}
-
-
 
 	return 0;
 }
