@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 using namespace std;
 
 wstring tetromino[7];
@@ -7,6 +8,9 @@ int nFieldHeight = 12;
 int nFieldWidth = 18;
 
 unsigned char* pField = nullptr;
+
+int nScreenWidth = 80;	//Console Screen Width X (columns)
+int nScreenHeight = 30;	//Console Screen Height Y (rows)
 
 int Rotate(int px, int py, int r)
 {
@@ -59,10 +63,50 @@ int main()
 	tetromino[6].append(L".X..");
 	tetromino[6].append(L".X..");
 
-	pField = new unsigned char[nFieldHeight * nFieldWidth];	//Create play field buffer
-	for (int x = 0; x < nFieldHeight; x++)	//Board boundary
+	//Create play field buffer
+	pField = new unsigned char[nFieldHeight * nFieldWidth];
+
+	//Board boundary
+	for (int x = 0; x < nFieldHeight; x++)
+	{
 		for (int y = 0; y < nFieldWidth; y++)
-			pField[y * nFieldWidth + x] = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1) ? 9 : 0;
+		{
+			bool bBoundary = (x == 0 || x == nFieldWidth - 1
+				|| y == nFieldHeight - 1);
+
+			pField[y * nFieldWidth + x] = bBoundary ? 9 : 0;
+		}
+	}
+
+	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
+	for (int i = 0; i < nScreenWidth * nScreenHeight; i++) screen[i] = L' ';
+
+	HANDLE hConsole = CreateConsoleScreenBuffer
+	(
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		NULL,
+		CONSOLE_TEXTMODE_BUFFER,
+		NULL
+	);
+	SetConsoleActiveScreenBuffer(hConsole);
+	DWORD dwBytesWritten = 0;
+
+	bool bGameOver = false;
+
+	while (!bGameOver)
+	{
+		//Display Frame
+		WriteConsoleOutputCharacter(
+			hConsole,
+			screen,
+			nScreenWidth * nScreenHeight,
+			{ 0,0 },
+			&dwBytesWritten
+		);
+	}
+
+
 
 	return 0;
 }
