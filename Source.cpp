@@ -96,6 +96,17 @@ int main()
 
 	while (!bGameOver)
 	{
+		// Draw Field
+		for (int x = 0; x < nFieldWidth; x++)
+		{
+			for (int y = 0; y < nFieldHeight; y++)
+			{
+				screen[(y + 2) * nScreenWidth + (x + 2)] = 
+					L" ABCDEFG=#"[pField[y * nFieldWidth + x]];
+			}
+		}
+
+
 		//Display Frame
 		WriteConsoleOutputCharacter(
 			hConsole,
