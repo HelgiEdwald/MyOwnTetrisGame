@@ -97,7 +97,7 @@ int main()
 	{
 		for (int y = 0; y < nFieldHeight; y++)
 		{
-			bool bBoundary = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1); 
+			bool bBoundary = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1);
 			pField[y * nFieldWidth + x] = bBoundary ? 9 : 0;
 		}
 	}
@@ -139,11 +139,18 @@ int main()
 	SetConsoleActiveScreenBuffer(hConsole);
 	DWORD dwBytesWritten = 0;
 
+	//Game Logic Variables
 	bool bGameOver = false;
+	int nCurrentPiece = 1;
+	int nCurrentRotation = 0;
+	int nCurrentX = nFieldWidth / 2;
+	int nCurrentY = 0;
+
+
 
 	while (!bGameOver)
 	{
-		
+
 		// GAME TIMING ======================
 
 
@@ -166,13 +173,26 @@ int main()
 			}
 		}
 
+		//Draw Current Piece
+		for (int px = 0; px < 4; px++)
+		{
+			for (int py = 0; py < 4; py++)
+			{
+				if (tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == L'X')
+				{
+					screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px + 2)] =      
+						nCurrentPiece + 65;
+				}
+			}
+		}
+
 		//Display Frame
 		WriteConsoleOutputCharacter
 		(
-			hConsole, 
-			screen, 
-			nScreenWidth * nScreenHeight, 
-			{ 0,0 }, 
+			hConsole,
+			screen,
+			nScreenWidth * nScreenHeight,
+			{ 0,0 },
 			&dwBytesWritten
 		);
 	}
