@@ -1,5 +1,8 @@
 #include <iostream>
 #include <Windows.h>
+#include <thread>
+#include <chrono>
+
 using namespace std;
 
 wstring tetromino[7];
@@ -97,10 +100,12 @@ int main()
 	{
 		for (int y = 0; y < nFieldHeight; y++)
 		{
-			bool bBoundary = (x == 0 || x == nFieldWidth - 1 || y == nFieldHeight - 1);
+			bool bBoundary = (x == 0 || x == nFieldWidth - 1 
+							|| y == nFieldHeight - 1);
+
 			pField[y * nFieldWidth + x] = bBoundary ? 9 : 0;
 		}
-	}
+	}	
 
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
 	for (int i = 0; i < nScreenWidth * nScreenHeight; i++) screen[i] = L' ';
@@ -113,6 +118,7 @@ int main()
 		CONSOLE_TEXTMODE_BUFFER,
 		NULL
 	);
+
 
 	//Gemini helped here to resize the console
 	// --------------------------------------------
@@ -146,19 +152,43 @@ int main()
 	int nCurrentX = nFieldWidth / 2;
 	int nCurrentY = 0;
 
-
+	bool bKey[4];
 
 	while (!bGameOver)
 	{
 
 		// GAME TIMING ======================
-
+		this_thread::sleep_for(50ms);
 
 		// INPUT ============================
+		for (int k = 0; k < 4; k++)
+		{
+			bool bKeyState = 
+				(0x8000 & 
+					GetAsyncKeyState((unsigned char)("\x27\x25\x28Z"[k])));
 
+			bKey[k] = bKeyState != 0;
+			
+		}
 
 		// GAME LOGIC =======================
+		if (bKey[0])
+		{
+			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
+				nCurrentX + 1, nCurrentY))
+			{
+				nCurrentX = nCurrentX + 1;
+			}
+		}
 
+		if (bKey[1])
+		{
+			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
+							 nCurrentX - 1, nCurrentY))
+			{
+				nCurrentX = nCurrentX - 1;
+			}
+		}
 
 		// RENDER OUTPUT ====================
 
@@ -178,10 +208,12 @@ int main()
 		{
 			for (int py = 0; py < 4; py++)
 			{
-				if (tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == L'X')
+				int nIndex = Rotate(px, py, nCurrentRotation);
+				if (tetromino[nCurrentPiece][nIndex] == L'X')
 				{
-					screen[(nCurrentY + py + 2) * nScreenWidth + (nCurrentX + px + 2)] =      
-						nCurrentPiece + 65;
+					int nScreenPos = (nCurrentY + py + 2) * nScreenWidth
+									+ (nCurrentX + px + 2);
+					screen[nScreenPos] = nCurrentPiece + 65;
 				}
 			}
 		}
