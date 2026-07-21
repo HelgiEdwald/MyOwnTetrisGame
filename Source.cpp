@@ -190,6 +190,14 @@ int main()
 			}
 		}
 
+		if (bKey[2])
+		{
+			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
+				nCurrentX, nCurrentY + 1))
+			{
+				nCurrentY = nCurrentY + 1;
+			}
+		}
 		// RENDER OUTPUT ====================
 
 
