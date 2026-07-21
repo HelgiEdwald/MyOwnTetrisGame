@@ -100,12 +100,12 @@ int main()
 	{
 		for (int y = 0; y < nFieldHeight; y++)
 		{
-			bool bBoundary = (x == 0 || x == nFieldWidth - 1 
-							|| y == nFieldHeight - 1);
+			bool bBoundary = (x == 0 || x == nFieldWidth - 1
+				|| y == nFieldHeight - 1);
 
 			pField[y * nFieldWidth + x] = bBoundary ? 9 : 0;
 		}
-	}	
+	}
 
 	wchar_t* screen = new wchar_t[nScreenWidth * nScreenHeight];
 	for (int i = 0; i < nScreenWidth * nScreenHeight; i++) screen[i] = L' ';
@@ -163,41 +163,25 @@ int main()
 		// INPUT ============================
 		for (int k = 0; k < 4; k++)
 		{
-			bool bKeyState = 
-				(0x8000 & 
+			bool bKeyState =
+				(0x8000 &
 					GetAsyncKeyState((unsigned char)("\x27\x25\x28Z"[k])));
 
 			bKey[k] = bKeyState != 0;
-			
+
 		}
 
 		// GAME LOGIC =======================
-		if (bKey[0])
-		{
-			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
-				nCurrentX + 1, nCurrentY))
-			{
-				nCurrentX = nCurrentX + 1;
-			}
-		}
+		nCurrentX += (bKey[0] && DoesPieceFit(nCurrentPiece, nCurrentRotation,
+											  nCurrentX + 1, nCurrentY)) ? 1 : 0;
 
-		if (bKey[1])
-		{
-			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
-							 nCurrentX - 1, nCurrentY))
-			{
-				nCurrentX = nCurrentX - 1;
-			}
-		}
+		nCurrentX -= (bKey[1] && DoesPieceFit(nCurrentPiece, nCurrentRotation, 
+											  nCurrentX - 1, nCurrentY)) ? 1 : 0;
 
-		if (bKey[2])
-		{
-			if (DoesPieceFit(nCurrentPiece, nCurrentRotation,
-				nCurrentX, nCurrentY + 1))
-			{
-				nCurrentY = nCurrentY + 1;
-			}
-		}
+		nCurrentY += (bKey[2] && DoesPieceFit(nCurrentPiece, nCurrentRotation, 
+											  nCurrentX, nCurrentY + 1)) ? 1 : 0;
+
+
 		// RENDER OUTPUT ====================
 
 
@@ -220,7 +204,7 @@ int main()
 				if (tetromino[nCurrentPiece][nIndex] == L'X')
 				{
 					int nScreenPos = (nCurrentY + py + 2) * nScreenWidth
-									+ (nCurrentX + px + 2);
+						+ (nCurrentX + px + 2);
 					screen[nScreenPos] = nCurrentPiece + 65;
 				}
 			}
