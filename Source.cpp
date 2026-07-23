@@ -153,6 +153,7 @@ int main()
 	int nCurrentY = 0;
 
 	bool bKey[4];
+	bool bRotateHold = false;
 
 	while (!bGameOver)
 	{
@@ -173,13 +174,24 @@ int main()
 
 		// GAME LOGIC =======================
 		nCurrentX += (bKey[0] && DoesPieceFit(nCurrentPiece, nCurrentRotation,
-											  nCurrentX + 1, nCurrentY)) ? 1 : 0;
+			nCurrentX + 1, nCurrentY)) ? 1 : 0;
 
-		nCurrentX -= (bKey[1] && DoesPieceFit(nCurrentPiece, nCurrentRotation, 
-											  nCurrentX - 1, nCurrentY)) ? 1 : 0;
+		nCurrentX -= (bKey[1] && DoesPieceFit(nCurrentPiece, nCurrentRotation,
+			nCurrentX - 1, nCurrentY)) ? 1 : 0;
 
-		nCurrentY += (bKey[2] && DoesPieceFit(nCurrentPiece, nCurrentRotation, 
-											  nCurrentX, nCurrentY + 1)) ? 1 : 0;
+		nCurrentY += (bKey[2] && DoesPieceFit(nCurrentPiece, nCurrentRotation,
+			nCurrentX, nCurrentY + 1)) ? 1 : 0;
+
+		if (bKey[3])
+		{
+			nCurrentRotation += (!bRotateHold && DoesPieceFit(nCurrentPiece,
+				nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1 : 0;
+			bRotateHold = true;
+		}
+		else
+		{
+			bRotateHold = false;
+		}
 
 
 		// RENDER OUTPUT ====================
