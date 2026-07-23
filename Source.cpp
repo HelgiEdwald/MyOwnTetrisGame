@@ -155,11 +155,19 @@ int main()
 	bool bKey[4];
 	bool bRotateHold = false;
 
+	int nSpeed = 20;
+	int nSpeedCounter = 0;
+	bool bForceDown = false;
+
 	while (!bGameOver)
 	{
 
 		// GAME TIMING ======================
 		this_thread::sleep_for(50ms);
+		nSpeedCounter++;
+
+		bForceDown = (nSpeed == nSpeedCounter);
+
 
 		// INPUT ============================
 		for (int k = 0; k < 4; k++)
@@ -190,9 +198,52 @@ int main()
 		}
 		else
 		{
-			bRotateHold = false;
-		}
 
+		}
+		bRotateHold = false;
+
+		if (bForceDown)
+		{
+			if (DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1))
+				nCurrentY++;
+			else
+			{
+				// Lock current piece in the field
+				for (int px = 0; px < 4; px++)
+					for (int py = 0; py < 4; py++)
+						if (tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == L'X')
+							pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
+
+				// Check for full lines
+				for (int py = 0; py < 4; py++)
+					if (nCurrentY + py < nFieldHeight - 1)
+					{
+						bool bLine = true;
+						for (int px = 1; px < nFieldWidth - 1; px++)
+							bLine &= (pField[(nCurrentY + py) * nFieldWidth + px]) != 0;
+
+						if (bLine)
+						{
+							// Remove line, set to =
+							for (int px = 1; px < nFieldWidth - 1; px++)
+								pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+						}
+					}
+
+				// Choose next piece
+				nCurrentX = nFieldWidth / 2;
+				nCurrentY = 0;
+				nCurrentRotation = 0;
+				nCurrentPiece = rand() % 7;
+
+				//if piece does not fit
+				bGameOver = (!DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY));
+
+			}
+
+			nSpeedCounter = 0;
+
+		}
 
 		// RENDER OUTPUT ====================
 
