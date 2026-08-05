@@ -153,6 +153,8 @@ int main()
 	int nCurrentY = 0;
 
 	bool bKey[4];
+
+	vector<int> vLines;
 	bool bRotateHold = false;
 
 	int nSpeed = 20;
@@ -227,6 +229,8 @@ int main()
 							// Remove line, set to =
 							for (int px = 1; px < nFieldWidth - 1; px++)
 								pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+
+							vLines.push_back(nCurrentY + py);
 						}
 					}
 
@@ -271,6 +275,34 @@ int main()
 					screen[nScreenPos] = nCurrentPiece + 65;
 				}
 			}
+		}
+
+		if (!vLines.empty())
+		{
+			//Display Frame
+			WriteConsoleOutputCharacter
+			(
+				hConsole,
+				screen,
+				nScreenWidth * nScreenHeight,
+				{ 0,0 },
+				&dwBytesWritten
+			);
+			this_thread::sleep_for(400ms);
+
+			for (auto& v : vLines)
+			{
+				for (int px = 1; px < nFieldWidth - 1; px++)
+				{
+					for (int py = v; py > 0; py--)
+					{
+						pField[py * nFieldWidth + px] = pField[(py - 1) * nFieldWidth + px];
+					}
+					pField[px] = 0;
+				}
+			}
+
+			vLines.clear();
 		}
 
 		//Display Frame
