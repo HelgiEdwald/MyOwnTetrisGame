@@ -161,6 +161,9 @@ int main()
 	int nSpeedCounter = 0;
 	bool bForceDown = false;
 
+	int nPieceCount = 0;
+	int nScore = 0;
+
 	while (!bGameOver)
 	{
 
@@ -216,6 +219,12 @@ int main()
 						if (tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] == L'X')
 							pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
 
+				nPieceCount++;
+
+				if (nPieceCount % 10 == 0)
+					if (nSpeed >= 10) nSpeed--;
+
+
 				// Check for full lines
 				for (int py = 0; py < 4; py++)
 					if (nCurrentY + py < nFieldHeight - 1)
@@ -233,6 +242,10 @@ int main()
 							vLines.push_back(nCurrentY + py);
 						}
 					}
+
+				nScore += 25;
+
+				if (!vLines.empty()) nScore += (1 << (vLines.size()) * 100);
 
 				// Choose next piece
 				nCurrentX = nFieldWidth / 2;
@@ -277,6 +290,10 @@ int main()
 			}
 		}
 
+		// Draw Score
+
+		swprintf_s(&screen[2 * nScreenWidth + nFieldWidth + 6], 16, L"SCORE: %8d", nScore);
+
 		if (!vLines.empty())
 		{
 			//Display Frame
@@ -315,6 +332,12 @@ int main()
 			&dwBytesWritten
 		);
 	}
+
+	// Game Over
+
+	CloseHandle(hConsole);
+	cout << "Game Over! Score:" << nScore << endl;
+	system("pause");
 
 	return 0;
 }
