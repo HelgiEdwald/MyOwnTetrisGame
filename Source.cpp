@@ -203,9 +203,9 @@ int main()
 		}
 		else
 		{
+			bRotateHold = false;
 
 		}
-		bRotateHold = false;
 
 		if (bForceDown)
 		{
